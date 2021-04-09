@@ -12,7 +12,7 @@ import EssentialFeed
 class RemoteFeedLoaderTests: XCTestCase {
     
     func test_init_doesNotRequestDataFromURL() {
-        XCTAssertNil(makeSUT().client.requestedURL)
+        XCTAssertEqual(makeSUT().client.requestedURLs.count, 0)
     }
     
     func test_load_requestsDataFromURL() {
@@ -22,7 +22,17 @@ class RemoteFeedLoaderTests: XCTestCase {
         // Act/When
         sut.load()
         // Assert/Then
-        XCTAssertEqual(client.requestedURL, url)
+        XCTAssertEqual(client.requestedURLs, [url])
+    }
+    
+    func test_loadTwice_requestsDataFromURLTwice() {
+        let url = URL(string: "https://a-given-url.com")!
+        let (sut, client) = makeSUT(url: url)
+        
+        sut.load()
+        sut.load()
+        
+        XCTAssertEqual(client.requestedURLs, [url, url])
     }
     
     // MARK: Helpers
@@ -35,10 +45,10 @@ class RemoteFeedLoaderTests: XCTestCase {
     }
     
     class HttpClientSpy: HttpClient {
-        var requestedURL: URL?
+        var requestedURLs = [URL]()
         
         func get(from url: URL) {
-            requestedURL = url
+            requestedURLs.append(url)
         }
     }
 }
