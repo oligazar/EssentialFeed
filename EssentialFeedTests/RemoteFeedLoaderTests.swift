@@ -36,12 +36,13 @@ class RemoteFeedLoaderTests: XCTestCase {
     }
     
     func test_load_deliversErrorOnClientError() {
+        // Arrange: Given the sut and its Http client that will always fail with a given error (stubbed behavior)
         let (sut, client) = makeSUT()
-        
         client.error = NSError(domain: "Test", code: 0)
+        // Act: when we tell the sut to load
         var capturedErrors = [RemoteFeedLoader.Error]()
         sut.load() { capturedErrors.append($0) }
-        
+        // Assert: then we expect a captured error to be a connectivity error
         XCTAssertEqual(capturedErrors, [.connectivity])
     }
     
