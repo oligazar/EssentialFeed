@@ -173,13 +173,13 @@ class RemoteFeedLoaderTests: XCTestCase {
     }
     
     class HttpClientSpy: HttpClient {
-        var messages = [(url: URL, completion: (HttpClientResult) -> Void)]()
+        var messages = [(url: URL, completion: (HTTPClienResult) -> Void)]()
         
         var requestedURLs: [URL] {
             return messages.map { $0.url }
         }
         
-        func get(from url: URL, completion: @escaping (HttpClientResult) -> Void) {
+        func get(from url: URL, completion: @escaping (HTTPClienResult) -> Void) {
             messages.append((url, completion))
         }
         
