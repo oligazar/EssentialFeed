@@ -63,8 +63,24 @@ class URLSessionHTTPClientTest: XCTestCase {
         XCTAssertEqual(receivedError as NSError?, requestError)
     }
     
-    func test_getFromUrl_failsOnAllNilValues() {
+    // Time 21:22
+    func test_getFromUrl_failsOnAllIvalidRepresentationCases() {
+        let anyData = Data("Any data".utf8)
+        let anyError = NSError(domain: "any", code: 0)
+        let nonHTTPURLResponse = URLResponse(url: anyURL(), mimeType: nil, expectedContentLength: 0, textEncodingName: nil)
+        let anyHTTPURLResponse = HTTPURLResponse(url: anyURL(), statusCode: 200, httpVersion: nil, headerFields: nil)
+        
         XCTAssertNotNil(resultError(for: nil, response: nil, error: nil))
+        XCTAssertNotNil(resultError(for: nil, response: nonHTTPURLResponse, error: nil))
+        XCTAssertNotNil(resultError(for: nil, response: anyHTTPURLResponse, error: nil))
+        XCTAssertNotNil(resultError(for: anyData, response: nil, error: nil))
+        XCTAssertNotNil(resultError(for: anyData, response: nil, error: anyError))
+        XCTAssertNotNil(resultError(for: nil, response: nonHTTPURLResponse, error: anyError))
+        XCTAssertNotNil(resultError(for: nil, response: anyHTTPURLResponse, error: anyError))
+        XCTAssertNotNil(resultError(for: anyData, response: nonHTTPURLResponse, error: anyError))
+        XCTAssertNotNil(resultError(for: anyData, response: anyHTTPURLResponse, error: anyError))
+        XCTAssertNotNil(resultError(for: anyData, response: nonHTTPURLResponse, error: nil))
+        
     }
     
     // MARK: Helpers
