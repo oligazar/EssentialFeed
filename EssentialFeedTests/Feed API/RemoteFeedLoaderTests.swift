@@ -166,7 +166,7 @@ class RemoteFeedLoaderTests: XCTestCase {
         wait(for: [exp], timeout: 1.0)
     }
     
-    class HttpClientSpy: HttpClient {
+    class HttpClientSpy: HTTPClient {
         var messages = [(url: URL, completion: (HTTPClienResult) -> Void)]()
         
         var requestedURLs: [URL] {
