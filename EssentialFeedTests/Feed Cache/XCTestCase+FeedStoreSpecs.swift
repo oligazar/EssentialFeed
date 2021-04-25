@@ -10,6 +10,10 @@ import XCTest
 import EssentialFeed
 
 extension FeedStoreSpecs where Self: XCTestCase {
+    
+    func assertThatRetrieveDeliversEmptyOnEmptyCache(on sut: FeedStore, file: StaticString = #file, line: UInt = #line) {
+        expect(sut, toRetrieve: .empty, file: file, line: line)
+    }
 
     @discardableResult
     func deleteCache(from sut: FeedStore) -> Error? {
