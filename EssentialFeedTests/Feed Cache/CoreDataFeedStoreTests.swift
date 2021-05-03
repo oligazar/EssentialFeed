@@ -5,15 +5,30 @@
 //  Created by Alexander on 3/5/21.
 //
 
-import Foundation
+import EssentialFeed
 import XCTest
+
+class CoreDataFeedStore: FeedStore {
+    func deleteCachedFeed(completion: @escaping DeletionCompletion) {
+        
+    }
+    
+    func insert(_ feed: [LocalFeedImage], timestamp: Date, completion: @escaping InsertionCompletion) {
+        
+    }
+    
+    func retrieve(completion: @escaping RetrievalCompletion) {
+        completion(.empty)
+    }
+    
+}
 
 class CoreDataFeedStoreTests: XCTestCase, FeedStoreSpecs {
     
     func test_retrieve_deliversEmptyOnEmptyCache() {
-//        let sut = makeSUT()
-//
-//        assertThatRetrieveDeliversEmptyOnEmptyCache(on: sut)
+        let sut = makeSUT()
+
+        assertThatRetrieveDeliversEmptyOnEmptyCache(on: sut)
     }
     
     func test_retrieve_hasNoSideEffectsOnEmptyCache() {
@@ -84,11 +99,11 @@ class CoreDataFeedStoreTests: XCTestCase, FeedStoreSpecs {
     
     // MARK: Helpers
     
-//    private func makeSUT(storeURL: URL? = nil, file: StaticString = #file, line: UInt = #line) -> FeedStore {
-//        let sut = CodableFeedStore(storeURL: storeURL ?? testSpecificStoreURL())
-//        trackMemoryLeaks(sut, file: file, line: line)
-//        return sut
-//    }
+    private func makeSUT(storeURL: URL? = nil, file: StaticString = #file, line: UInt = #line) -> FeedStore {
+        let sut = CoreDataFeedStore()
+        trackMemoryLeaks(sut, file: file, line: line)
+        return sut
+    }
     
     private func testSpecificStoreURL() -> URL {
         return cachesDirectory().appendingPathComponent("\(type(of: self)).store")
@@ -161,7 +176,7 @@ extension CoreDataFeedStoreTests: FailableDeleteFeedStoreSpecs {
     func test_delete_hasNoSideEffectsOnDeletionError() {
 //        let noDeletePermissionsURL = cachesDirectory()
 //        let sut = makeSUT(storeURL: noDeletePermissionsURL)
-//        
+//
 //        assertThatDeleteHasNoSideEffectsOnDeletionError(on: sut)
     }
     
