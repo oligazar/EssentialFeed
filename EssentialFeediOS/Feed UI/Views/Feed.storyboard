@@ -79,6 +79,9 @@ Location</string>
                                                             <state key="normal" title="↻">
                                                                 <color key="titleColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
                                                             </state>
+                                                            <connections>
+                                                                <action selector="retryButtonTapped" destination="vEt-qu-gSY" eventType="touchUpInside" id="cx7-7u-5Tt"/>
+                                                            </connections>
                                                         </button>
                                                     </subviews>
                                                     <color key="backgroundColor" red="0.89019607840000003" green="0.89019607840000003" blue="0.89019607840000003" alpha="1" colorSpace="calibratedRGB"/>
@@ -116,6 +119,13 @@ Location</string>
                                         <constraint firstItem="FFV-QX-fgI" firstAttribute="leading" secondItem="grp-Yu-lCB" secondAttribute="leadingMargin" id="yYe-sT-9Qn"/>
                                     </constraints>
                                 </tableViewCellContentView>
+                                <connections>
+                                    <outlet property="descriptionLabel" destination="KMX-AJ-qhU" id="8ek-l6-wQ1"/>
+                                    <outlet property="feedImageContainer" destination="jeW-0L-o0Y" id="veV-Kx-owD"/>
+                                    <outlet property="feedImageView" destination="qLe-JS-2yH" id="bKT-mD-C13"/>
+                                    <outlet property="locationContainer" destination="1Be-NP-QHy" id="Ofy-XR-u9z"/>
+                                    <outlet property="locationLabel" destination="u5j-7K-wFS" id="0g7-E3-h5A"/>
+                                </connections>
                             </tableViewCell>
                         </prototypes>
                         <connections>

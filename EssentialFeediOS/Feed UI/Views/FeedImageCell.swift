@@ -8,11 +8,11 @@
 import UIKit
 
 public final class FeedImageCell: UITableViewCell {
-    public let locationContainer = UIView()
-    public let locationLabel = UILabel()
-    public let descriptionLabel = UILabel()
-    public let feedImageContainer = UIView()
-    public let feedImageView = UIImageView()
+    @IBOutlet public var locationContainer: UIView!
+    @IBOutlet public var locationLabel: UILabel!
+    @IBOutlet public var descriptionLabel: UILabel!
+    @IBOutlet public var feedImageContainer: UIView!
+    @IBOutlet public var feedImageView: UIImageView!
     
     private(set) public lazy var feedImageRetryButton: UIButton = {
         let button = UIButton()
@@ -22,7 +22,7 @@ public final class FeedImageCell: UITableViewCell {
     
     var onRetry: (() -> Void)?
     
-    @objc private func retryButtonTapped() {
+    @IBAction private func retryButtonTapped() {
         onRetry?()
     }
 }
