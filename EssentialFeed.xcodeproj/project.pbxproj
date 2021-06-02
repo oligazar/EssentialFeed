@@ -393,7 +393,6 @@
 				84EDE13F2666B2510086CEC8 /* Feed Presentation */,
 				84EDE113266669A70086CEC8 /* Feed UI */,
 				84B4EECA2648DE69002B726C /* Info.plist */,
-				84B4EF012649AD73002B726C /* FeedUIIntegrationTests.swift */,
 			);
 			path = EssentialFeediOSTests;
 			sourceTree = "<group>";
@@ -526,6 +525,7 @@
 			isa = PBXGroup;
 			children = (
 				84EDE114266669B40086CEC8 /* Helpers */,
+				84B4EF012649AD73002B726C /* FeedUIIntegrationTests.swift */,
 			);
 			path = "Feed UI";
 			sourceTree = "<group>";
