@@ -7,32 +7,12 @@
 
 import Foundation
 
-public struct FeedViewModel {
-    public let feed: [FeedImage]
-}
-
 public protocol FeedView {
     func display(_ viewModel: FeedViewModel)
 }
 
-public struct FeedLoadingViewModel {
-    public let isLoading: Bool
-}
-
 public protocol FeedLoadingView {
     func display(_ viewModel: FeedLoadingViewModel)
-}
-
-public struct FeedErrorViewModel {
-    public let message: String?
-    
-    static var noError: FeedErrorViewModel {
-        return FeedErrorViewModel(message: nil)
-    }
-    
-    static func error(message: String) -> FeedErrorViewModel {
-        return FeedErrorViewModel(message: message)
-    }
 }
 
 public protocol FeedErrorView {
@@ -40,9 +20,9 @@ public protocol FeedErrorView {
 }
 
 public final class FeedPresenter {
-    let errorView: FeedErrorView
-    let loadingView: FeedLoadingView
     let feedView: FeedView
+    let loadingView: FeedLoadingView
+    let errorView: FeedErrorView
     
     public static var title: String {
         NSLocalizedString("FEED_VIEW_TITLE",
@@ -50,10 +30,10 @@ public final class FeedPresenter {
                           bundle: Bundle(for: FeedPresenter.self), comment: "Title for the feed view")
     }
     
-    public init(errorView: FeedErrorView, loadingView: FeedLoadingView, feedView: FeedView) {
-        self.errorView = errorView
-        self.loadingView = loadingView
+    public init(feedView: FeedView, loadingView: FeedLoadingView, errorView: FeedErrorView) {
         self.feedView = feedView
+        self.loadingView = loadingView
+        self.errorView = errorView
     }
     
     private var feedLoadError: String {

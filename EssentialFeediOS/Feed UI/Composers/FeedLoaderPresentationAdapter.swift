@@ -17,13 +17,13 @@ final class FeedLoaderPresentationAdapter: FeedViewControllerDelegate {
     }
     
     func didRequestFeedRefresh() {
-        presenter?.didStartLoading()
+        presenter?.didStartLoadingFeed()
         feedLoader.load { [weak self] result in
             switch result {
             case let .success(feed):
-                self?.presenter?.didFinishLoading(with: feed)
+                self?.presenter?.didFinishLoadingFeed(with: feed)
             case let .failure(error):
-                self?.presenter?.didFailedLoading(with: error)
+                self?.presenter?.didFinishLoadingFeed(with: error)
             }
         }
     }
