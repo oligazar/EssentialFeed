@@ -12,8 +12,15 @@ protocol FeedViewControllerDelegate {
     func didRequestFeedRefresh()
 }
 
-final public class FeedViewController: UITableViewController, UITableViewDataSourcePrefetching, FeedLoadingView {
+final public class FeedViewController: UITableViewController, UITableViewDataSourcePrefetching, FeedLoadingView, FeedErrorView {
+    
     var delegate: FeedViewControllerDelegate?
+    
+    @IBOutlet public var errorView: UIButton?
+    
+    @IBAction func hideErrorView() {
+        errorView?.isHidden = true
+    }
     
     var tableModel = [FeedImageCellController]() {
         didSet { tableView.reloadData() }
@@ -21,7 +28,7 @@ final public class FeedViewController: UITableViewController, UITableViewDataSou
     
     public override func viewDidLoad() {
         super.viewDidLoad()
-        
+        errorView?.isHidden = true
         refresh()
     }
     
@@ -35,6 +42,11 @@ final public class FeedViewController: UITableViewController, UITableViewDataSou
         } else {
             refreshControl?.endRefreshing()
         }
+    }
+    
+    public func display(_ viewModel: FeedErrorViewModel) {
+        errorView?.isHidden = viewModel.message == nil
+        errorView?.setTitle(viewModel.message, for: .normal)
     }
     
     public override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {

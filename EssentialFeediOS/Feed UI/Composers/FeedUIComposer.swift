@@ -8,12 +8,6 @@
 import EssentialFeed
 import UIKit
 
-class FeedErrorViewImpl: FeedErrorView {
-    func display(_ viewModel: FeedErrorViewModel) {
-        
-    }
-}
-
 public final class FeedUIComposer {
     private init() {}
     
@@ -26,7 +20,7 @@ public final class FeedUIComposer {
         presentationAdapter.presenter = FeedPresenter(
             feedView: FeedViewAdapter(controller: feedController, loader: MainQueueDispatchDecorator(decoratee: imageLoader)),
             loadingView: WeakRefVirtualProxy(feedController),
-            errorView: FeedErrorViewImpl()
+            errorView: WeakRefVirtualProxy(feedController)
         )
         
         return feedController
