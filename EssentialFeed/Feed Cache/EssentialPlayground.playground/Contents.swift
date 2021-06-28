@@ -1,26 +1,86 @@
-import UIKit
-
-var str = "Hello, playground"
-
-struct Size {
-    var width = 0.0, height = 0.0
-}
-struct Point {
-    var x = 0.0, y = 0.0
+struct Text {
+    let description: String
 }
 
-struct Rect {
-    let origin: Int
-    let size: Int
+protocol Modifyer {
+    func modify() -> Text
 }
 
-extension Rect {
-    init(center: Point, size: Size) {
-        let originX = center.x - (size.width / 2)
-        let originY = center.y - (size.height / 2)
-        self.init(origin: 1, size: 2)
+class ConcreteModifyer: Modifyer {
+    func modify() -> Text {
+        return Text(description: "Text")
     }
 }
 
+class ModifyerDecorator: Modifyer {
+    let decoratee: Modifyer
+    
+    init(_ modifyer: Modifyer) {
+        self.decoratee = modifyer
+    }
+    
+    func modify() -> Text {
+        return decoratee.modify()
+    }
+}
+
+class ParenthesesDecorator: ModifyerDecorator {
+    override func modify() -> Text {
+        return Text(description: "(\(decoratee.modify().description))")
+    }
+}
+
+class SquareBracketsDecorator: ModifyerDecorator {
+    override func modify() -> Text {
+        return Text(description: "[\(decoratee.modify().description)]")
+    }
+}
+
+class AngleBracketsDecorator: ModifyerDecorator {
+    override func modify() -> Text {
+        return Text(description: "<\(decoratee.modify().description)>")
+    }
+}
+
+class CurlyBracketsDecorator: ModifyerDecorator {
+    override func modify() -> Text {
+        return Text(description: "{\(decoratee.modify().description)}")
+    }
+}
+
+func client() {
+    var modifyer: Modifyer = ConcreteModifyer()
+    print(modifyer.modify())
+    
+    modifyer = ParenthesesDecorator(modifyer)
+    print(modifyer.modify())
+    
+    modifyer = SquareBracketsDecorator(modifyer)
+    print(modifyer.modify())
+    
+    modifyer = AngleBracketsDecorator(modifyer)
+    print(modifyer.modify())
+    
+    modifyer = CurlyBracketsDecorator(modifyer)
+    print(modifyer.modify())
+}
+
+client()
 
 
+class Dog {
+    
+    let legsCount = 4
+    let url = "http://"
+    
+    let age: Int = 3
+    var isHungry: Bool = true
+    
+    func run() {
+        isHungry = true
+    }
+    
+    func eat() {
+        isHungry = false
+    }
+}
