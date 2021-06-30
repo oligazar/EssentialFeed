@@ -56,6 +56,16 @@ class FeedImagePresenter<View: FeedImageView, Image> where View.Image == Image {
             shouldRetry: false
         ))
     }
+    
+    func didFailedLoadingImage(for model: FeedImage) {
+        view.display(FeedImageViewModel(
+            location: model.location,
+            description: model.description,
+            image: nil,
+            isImageLoading: false,
+            shouldRetry: true
+        ))
+    }
 }
 
 class FeedImagePresenterTests: XCTestCase {
@@ -68,26 +78,35 @@ class FeedImagePresenterTests: XCTestCase {
     
     func test_didStartLoadingImage_displaysLoadingIndicatorAndNoImage() {
         let (sut, view) = makeSut()
-        let model = makeModel()
-        let result = makeResult(from: model, image: nil, isImageLoading: true, shouldRetry: false)
+        let image: String? = nil
+        let (model, viewModel) = makeModel(image: image, isImageLoading: true, shouldRetry: false)
 
         sut.didStartLoadingImage(for: model)
 
-        XCTAssertEqual(view.messages[0], result)
+        XCTAssertEqual(view.messages[0], viewModel)
     }
     
     func test_didFinishLoadingImage_displaysTransformedImageNoLoadingAndNoRetry() {
         let (sut, view) = makeSut()
         
-        let model = makeModel()
         let data = anyImageData()
-        let result = makeResult(from: model, image: data.base64EncodedString(), isImageLoading: false, shouldRetry: false)
+        let (model, viewModel) = makeModel(image: data.base64EncodedString(), isImageLoading: false, shouldRetry: false)
 
         sut.didFinishLoadingImage(data, for: model)
 
-        XCTAssertEqual(view.messages[0], result)
+        XCTAssertEqual(view.messages[0], viewModel)
     }
     
+    func test_didFailedLoadingImage_displaysNoImageNoLoadingAndRetry() {
+        let (sut, view) = makeSut()
+        
+        let image: String? = nil
+        let (model, viewModel) = makeModel(image: image, isImageLoading: false, shouldRetry: true)
+
+        sut.didFailedLoadingImage(for: model)
+
+        XCTAssertEqual(view.messages[0], viewModel)
+    }
     // MARK: helpers
     
     private func makeSut(file: StaticString = #filePath, line: UInt = #line) -> (sut: FeedImagePresenter<ViewSpy, String>, view: ViewSpy) {
@@ -99,22 +118,20 @@ class FeedImagePresenterTests: XCTestCase {
         return (sut, view)
     }
     
-    private func makeModel() -> FeedImage {
-        return FeedImage(
+    private func makeModel<Image: Equatable>(image: Image?, isImageLoading: Bool, shouldRetry: Bool) -> (model: FeedImage, viewModel: FeedImageViewModel<Image>)  {
+        let model = FeedImage(
             id: UUID(),
             description: "start loading",
             location: "any location",
             url: URL(string: "http://image.url")!
         )
-    }
-    
-    private func makeResult(from model: FeedImage, image: String?, isImageLoading: Bool, shouldRetry: Bool) -> FeedImageViewModel<String> {
-        return FeedImageViewModel<String>(
+        let viewModel = FeedImageViewModel<Image>(
             location: model.location,
             description: model.description,
             image: image,
             isImageLoading: isImageLoading,
             shouldRetry: shouldRetry)
+        return (model, viewModel)
     }
     
     private class ViewSpy: FeedImageView {
