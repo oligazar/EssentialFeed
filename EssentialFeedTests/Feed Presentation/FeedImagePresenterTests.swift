@@ -29,6 +29,7 @@ protocol FeedImageView {
 }
 
 class FeedImagePresenter<View: FeedImageView, Image> where View.Image == Image {
+
     private let view: View
     
     init(view: View) {
@@ -56,13 +57,8 @@ class FeedImagePresenterTests: XCTestCase {
     
     func test_didStartLoadingImage_displaysLoadingIndicatorAndNoImage() {
         let (sut, view) = makeSut()
-        let model = FeedImage(id: UUID(), description: "start loading", location: "any location", url: URL(string: "http://image.url")!)
-        
-        let result = FeedImageViewModel<String>(
-            location: model.location,
-            description: model.description,
-            image: nil,
-            isImageLoading: true, shouldRetry: false)
+        let model = makeModel()
+        let result = makeResult(from: model, image: nil, isImageLoading: true, shouldRetry: false)
 
         sut.didStartLoadingImage(for: model)
 
@@ -77,6 +73,24 @@ class FeedImagePresenterTests: XCTestCase {
         trackMemoryLeaks(view)
         trackMemoryLeaks(sut)
         return (sut, view)
+    }
+    
+    private func makeModel() -> FeedImage {
+        return FeedImage(
+            id: UUID(),
+            description: "start loading",
+            location: "any location",
+            url: URL(string: "http://image.url")!
+        )
+    }
+    
+    private func makeResult(from model: FeedImage, image: String?, isImageLoading: Bool, shouldRetry: Bool) -> FeedImageViewModel<String> {
+        return FeedImageViewModel<String>(
+            location: model.location,
+            description: model.description,
+            image: image,
+            isImageLoading: isImageLoading,
+            shouldRetry: shouldRetry)
     }
     
     private class ViewSpy: FeedImageView {
