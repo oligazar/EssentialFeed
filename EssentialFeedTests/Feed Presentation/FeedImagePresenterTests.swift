@@ -29,11 +29,12 @@ protocol FeedImageView {
 }
 
 class FeedImagePresenter<View: FeedImageView, Image> where View.Image == Image {
-
     private let view: View
+    private let imageTransformer: (Data) -> Image?
     
-    init(view: View) {
+    init(view: View, imageTransformer: @escaping (Data) -> Image?) {
         self.view = view
+        self.imageTransformer = imageTransformer
     }
     
     func didStartLoadingImage(for model: FeedImage) {
@@ -41,6 +42,17 @@ class FeedImagePresenter<View: FeedImageView, Image> where View.Image == Image {
             location: model.location,
             description: model.description,
             image: nil, isImageLoading: true,
+            shouldRetry: false
+        ))
+    }
+    
+    func didFinishLoadingImage(_ data: Data, for model: FeedImage) {
+        let image = imageTransformer(data)
+        view.display(FeedImageViewModel(
+            location: model.location,
+            description: model.description,
+            image: image,
+            isImageLoading: false,
             shouldRetry: false
         ))
     }
@@ -64,11 +76,24 @@ class FeedImagePresenterTests: XCTestCase {
         XCTAssertEqual(view.messages[0], result)
     }
     
+    func test_didFinishLoadingImage_displaysTransformedImageNoLoadingAndNoRetry() {
+        let (sut, view) = makeSut()
+        
+        let model = makeModel()
+        let data = anyImageData()
+        let result = makeResult(from: model, image: data.base64EncodedString(), isImageLoading: false, shouldRetry: false)
+
+        sut.didFinishLoadingImage(data, for: model)
+
+        XCTAssertEqual(view.messages[0], result)
+    }
+    
     // MARK: helpers
     
     private func makeSut(file: StaticString = #filePath, line: UInt = #line) -> (sut: FeedImagePresenter<ViewSpy, String>, view: ViewSpy) {
         let view = ViewSpy()
-        let sut = FeedImagePresenter(view: view)
+        let transformer: (Data) -> String = { $0.base64EncodedString() }
+        let sut = FeedImagePresenter(view: view, imageTransformer: transformer)
         trackMemoryLeaks(view)
         trackMemoryLeaks(sut)
         return (sut, view)
@@ -100,5 +125,22 @@ class FeedImagePresenterTests: XCTestCase {
             messages.append(model)
         }
         
+    }
+    
+    private func anyImageData() -> Data {
+        return UIImage.make(withColor: .red).pngData()!
+    }
+}
+
+private extension UIImage {
+    static func make(withColor color: UIColor) -> UIImage {
+        let rect = CGRect(x: 0, y: 0, width: 1, height: 1)
+        UIGraphicsBeginImageContext(rect.size)
+        let context = UIGraphicsGetCurrentContext()!
+        context.setFillColor(color.cgColor)
+        context.fill(rect)
+        let img = UIGraphicsGetImageFromCurrentImageContext()
+        UIGraphicsEndImageContext()
+        return img!
     }
 }
