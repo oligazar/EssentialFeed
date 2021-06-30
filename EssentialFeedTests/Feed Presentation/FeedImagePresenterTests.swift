@@ -49,8 +49,7 @@ class FeedImagePresenter<View: FeedImageView, Image> where View.Image == Image {
 class FeedImagePresenterTests: XCTestCase {
     
     func test_init_doesNotSendMessagesToView() {
-        let view = ViewSpy()
-        let _ = FeedImagePresenter(view: view)
+        let (_, view) = makeSut()
         
         XCTAssertEqual(view.messages, [])
     }
