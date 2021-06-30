@@ -8,6 +8,44 @@
 import UIKit
 import EssentialFeed
 
+public class ErrorView: UIView {
+    @IBOutlet private(set) public var button: UIButton!
+    
+    private var isVisible: Bool {
+        return alpha > 0
+    }
+    
+    public var message: String? {
+        get { return isVisible ? button.title(for: .normal) : nil }
+    }
+    
+    public override func awakeFromNib() {
+        super.awakeFromNib()
+        
+        button.alpha = 0
+        button.setTitle(nil, for: .normal)
+    }
+    
+    @IBAction func hideMessage() {
+        UIView.animate(
+            withDuration: 0.25,
+            animations: { self.alpha = 0 },
+            completion: { completed in
+                if completed {
+                    self.button.setTitle(nil, for: .normal)
+                }
+            })
+    }
+    
+    func show(message: String) {
+        button?.setTitle(message, for: .normal)
+        
+        UIView.animate(withDuration: 0.25) {
+            self.alpha = 1
+        }
+    }
+}
+
 protocol FeedViewControllerDelegate {
     func didRequestFeedRefresh()
 }
@@ -16,11 +54,7 @@ final public class FeedViewController: UITableViewController, UITableViewDataSou
     
     var delegate: FeedViewControllerDelegate?
     
-    @IBOutlet public var errorView: UIButton?
-    
-    @IBAction func hideErrorView() {
-        errorView?.isHidden = true
-    }
+    @IBOutlet public var errorView: ErrorView?
     
     var tableModel = [FeedImageCellController]() {
         didSet { tableView.reloadData() }
@@ -28,7 +62,6 @@ final public class FeedViewController: UITableViewController, UITableViewDataSou
     
     public override func viewDidLoad() {
         super.viewDidLoad()
-        errorView?.isHidden = true
         refresh()
     }
     
@@ -45,8 +78,11 @@ final public class FeedViewController: UITableViewController, UITableViewDataSou
     }
     
     public func display(_ viewModel: FeedErrorViewModel) {
-        errorView?.isHidden = viewModel.message == nil
-        errorView?.setTitle(viewModel.message, for: .normal)
+        if let message = viewModel.message {
+            errorView?.show(message: message)
+        } else {
+            errorView?.hideMessage()
+        }
     }
     
     public override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
