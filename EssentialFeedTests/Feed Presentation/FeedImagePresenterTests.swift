@@ -9,65 +9,6 @@ import Foundation
 import XCTest
 import EssentialFeed
 
-struct FeedImageViewModel<Image: Equatable>: Equatable {
-    
-    let location: String?
-    let description: String?
-    let image: Image?
-    let isImageLoading: Bool
-    let shouldRetry: Bool
-    
-    var hasLocation: Bool {
-        return location != nil
-    }
-}
-
-protocol FeedImageView {
-    associatedtype Image: Equatable
-    
-    func display(_ model: FeedImageViewModel<Image>)
-}
-
-class FeedImagePresenter<View: FeedImageView, Image> where View.Image == Image {
-    private let view: View
-    private let imageTransformer: (Data) -> Image?
-    
-    init(view: View, imageTransformer: @escaping (Data) -> Image?) {
-        self.view = view
-        self.imageTransformer = imageTransformer
-    }
-    
-    func didStartLoadingImage(for model: FeedImage) {
-        view.display(FeedImageViewModel(
-            location: model.location,
-            description: model.description,
-            image: nil, isImageLoading: true,
-            shouldRetry: false
-        ))
-    }
-    
-    func didFinishLoadingImage(_ data: Data, for model: FeedImage) {
-        let image = imageTransformer(data)
-        view.display(FeedImageViewModel(
-            location: model.location,
-            description: model.description,
-            image: image,
-            isImageLoading: false,
-            shouldRetry: false
-        ))
-    }
-    
-    func didFailedLoadingImage(for model: FeedImage) {
-        view.display(FeedImageViewModel(
-            location: model.location,
-            description: model.description,
-            image: nil,
-            isImageLoading: false,
-            shouldRetry: true
-        ))
-    }
-}
-
 class FeedImagePresenterTests: XCTestCase {
     
     func test_init_doesNotSendMessagesToView() {
