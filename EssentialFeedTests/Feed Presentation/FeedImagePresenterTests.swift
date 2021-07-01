@@ -7,7 +7,7 @@
 
 import Foundation
 import XCTest
-import EssentialFeed
+@testable import EssentialFeed
 
 class FeedImagePresenterTests: XCTestCase {
     

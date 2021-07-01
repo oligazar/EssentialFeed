@@ -402,7 +402,6 @@ class FeedUIIntegrationTests: XCTestCase {
         
         private(set) var cancelledImageURLs = [URL]()
         
-        
         func loadImageData(from url: URL, completion: @escaping (FeedImageDataLoader.Result) -> Void) -> FeedImageDataLoaderTask {
             imageRequests.append((url, completion))
             return TaskSpy { [weak self] in self?.cancelledImageURLs.append(url) }
