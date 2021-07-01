@@ -38,6 +38,18 @@ class FeedImagePresenterTests: XCTestCase {
         XCTAssertEqual(view.messages[0], viewModel)
     }
     
+    func test_didFinishLoadingImage_displaysNoImageNoLoadingAndRetryOnInvalidData() {
+        let (sut, view) = makeSut(transformer: { _ in nil })
+        
+        let data = Data("invalid image data".utf8)
+        let image: String? = nil
+        let (model, viewModel) = makeModel(image: image, isImageLoading: false, shouldRetry: true)
+
+        sut.didFinishLoadingImage(data, for: model)
+
+        XCTAssertEqual(view.messages[0], viewModel)
+    }
+    
     func test_didFailedLoadingImage_displaysNoImageNoLoadingAndRetry() {
         let (sut, view) = makeSut()
         
@@ -48,11 +60,11 @@ class FeedImagePresenterTests: XCTestCase {
 
         XCTAssertEqual(view.messages[0], viewModel)
     }
+    
     // MARK: helpers
     
-    private func makeSut(file: StaticString = #filePath, line: UInt = #line) -> (sut: FeedImagePresenter<ViewSpy, String>, view: ViewSpy) {
+    private func makeSut(transformer: @escaping (Data) -> String? = { $0.base64EncodedString() }, file: StaticString = #filePath, line: UInt = #line) -> (sut: FeedImagePresenter<ViewSpy, String>, view: ViewSpy) {
         let view = ViewSpy()
-        let transformer: (Data) -> String = { $0.base64EncodedString() }
         let sut = FeedImagePresenter(view: view, imageTransformer: transformer)
         trackMemoryLeaks(view)
         trackMemoryLeaks(sut)

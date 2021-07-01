@@ -31,8 +31,10 @@ public class FeedImagePresenter<View: FeedImageView, Image> where View.Image == 
         ))
     }
     
-    public func didFinishLoadingImage(_ data: Data, for model: FeedImage) {
-        let image = imageTransformer(data)
+    public func didFinishLoadingImage(_ data: Data, for model: FeedImage) {        
+        guard let image = imageTransformer(data) else {
+            return didFailedLoadingImage(for: model)
+        }
         view.display(FeedImageViewModel(
             location: model.location,
             description: model.description,
