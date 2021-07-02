@@ -9,12 +9,14 @@ import Foundation
 import XCTest
 @testable import EssentialFeed
 
+// replace messages array with single message
+
 class FeedImagePresenterTests: XCTestCase {
     
     func test_init_doesNotSendMessagesToView() {
         let (_, view) = makeSut()
         
-        XCTAssertEqual(view.messages, [])
+        XCTAssertEqual(view.message, nil)
     }
     
     func test_didStartLoadingImage_displaysLoadingIndicatorAndNoImage() {
@@ -24,7 +26,7 @@ class FeedImagePresenterTests: XCTestCase {
 
         sut.didStartLoadingImage(for: model)
 
-        XCTAssertEqual(view.messages[0], viewModel)
+        XCTAssertEqual(view.message, viewModel)
     }
     
     func test_didFinishLoadingImage_displaysTransformedImageNoLoadingAndNoRetry() {
@@ -35,7 +37,7 @@ class FeedImagePresenterTests: XCTestCase {
 
         sut.didFinishLoadingImage(data, for: model)
 
-        XCTAssertEqual(view.messages[0], viewModel)
+        XCTAssertEqual(view.message, viewModel)
     }
     
     func test_didFinishLoadingImage_displaysNoImageNoLoadingAndRetryOnInvalidData() {
@@ -47,7 +49,7 @@ class FeedImagePresenterTests: XCTestCase {
 
         sut.didFinishLoadingImage(data, for: model)
 
-        XCTAssertEqual(view.messages[0], viewModel)
+        XCTAssertEqual(view.message, viewModel)
     }
     
     func test_didFailedLoadingImage_displaysNoImageNoLoadingAndRetry() {
@@ -58,7 +60,7 @@ class FeedImagePresenterTests: XCTestCase {
 
         sut.didFailedLoadingImage(for: model)
 
-        XCTAssertEqual(view.messages[0], viewModel)
+        XCTAssertEqual(view.message, viewModel)
     }
     
     // MARK: helpers
@@ -89,10 +91,10 @@ class FeedImagePresenterTests: XCTestCase {
     
     private class ViewSpy: FeedImageView {
         typealias Image = String
-        var messages = [FeedImageViewModel<String>]()
+        var message: FeedImageViewModel<String>? = nil
         
         func display(_ model: FeedImageViewModel<String>) {
-            messages.append(model)
+            message = model
         }
         
     }
