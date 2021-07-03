@@ -9,8 +9,6 @@ import Foundation
 import XCTest
 @testable import EssentialFeed
 
-// replace messages array with single message
-
 class FeedImagePresenterTests: XCTestCase {
     
     func test_init_doesNotSendMessagesToView() {
