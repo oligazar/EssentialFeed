@@ -30,7 +30,7 @@ class RemoteFeedImageDataLoaderTests: XCTestCase {
     
     func test_loadImageDataFromURL_requestsDataFromURL() {
         let (sut, client) = makeSUT()
-        let url = URL(string: "http://a-given-url.com")!
+        let url = makeURL()
         
         sut.loadImageData(from: url)
         
@@ -39,7 +39,7 @@ class RemoteFeedImageDataLoaderTests: XCTestCase {
     
     func test_loadImageDataFromURLTwice_requestsDataFromURLTwice() {
         let (sut, client) = makeSUT()
-        let url = URL(string: "http://a-given-url.com")!
+        let url = makeURL()
         
         sut.loadImageData(from: url)
         sut.loadImageData(from: url)
@@ -55,6 +55,10 @@ class RemoteFeedImageDataLoaderTests: XCTestCase {
         trackMemoryLeaks(client)
         trackMemoryLeaks(sut)
         return (sut, client)
+    }
+    
+    private func makeURL() -> URL {
+        return URL(string: "http://a-given-url.com")!
     }
     
     class HttpClientSpy: HTTPClient {
