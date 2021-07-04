@@ -23,7 +23,12 @@ class RemoteFeedImageDataLoader {
         client.get(from: url) { result in
             switch(result) {
             case let .failure(error): completion(.failure(error))
-            case .success: completion(.failure(Error.invalidData))
+            case let .success((data, response)):
+                if response.statusCode == 200, !data.isEmpty {
+                    completion(.success(data))
+                } else {
+                    completion(.failure(Error.invalidData))                    
+                }
             }
         }
     }
@@ -79,11 +84,20 @@ class RemoteFeedImageDataLoaderTests: XCTestCase {
     
     func test_loadImageDataFromURL_deliversInvalidDataErrorOn200HTTPResponseWithEmptyData() {
         let (sut, client) = makeSUT()
+        let emptyData = Data()
         
         expect(sut: sut, toCompleteWith: .failure(RemoteFeedImageDataLoader.Error.invalidData)) {
-            let emptyData = Data()
             client.complete(withStatusCode: 200, data: emptyData)
         }
+    }
+    
+    func test_loadImageDataFromURL_deliversNonEmptyReceivedDataOn200HTTPResponse() {
+        let (sut, client) = makeSUT()
+        let nonEmptyData = Data("non empty data".utf8)
+        
+        expect(sut: sut, toCompleteWith: .success(nonEmptyData), when: {
+            client.complete(withStatusCode: 200, data: nonEmptyData)
+        })
     }
     
     // MARK: helpers
@@ -106,7 +120,9 @@ class RemoteFeedImageDataLoaderTests: XCTestCase {
                 XCTAssertEqual(receivedError, expectedError, file: file, line: line)
             case let (.failure(receivedError as RemoteFeedImageDataLoader.Error), .failure(expectedError as RemoteFeedImageDataLoader.Error)):
                 XCTAssertEqual(receivedError, expectedError, file: file, line: line)
-            default: break
+            case let (.success(receivedResult), .success(expectedResult)):
+                XCTAssertEqual(receivedResult, expectedResult)
+            default: XCTFail("Expected \(expectedResult), but got \(receivedResult) instead", file: file, line: line)
             }
             exp.fulfill()
         }
