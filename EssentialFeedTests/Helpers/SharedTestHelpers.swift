@@ -15,6 +15,6 @@ func anyURL() -> URL {
     return URL(string: "http://any-url.com")!
 }
 
-func anyData() -> Data {
+    func anyData() -> Data {
     return Data("any data".utf8)
 }
