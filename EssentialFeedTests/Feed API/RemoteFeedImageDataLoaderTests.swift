@@ -78,7 +78,7 @@ class RemoteFeedImageDataLoaderTests: XCTestCase {
         let clientError = NSError(domain: "Http Error", code: 0)
         
         expect(sut: sut, toCompleteWith: .failure(clientError)) {
-            client.completeWith(error: clientError, at: 0)
+            client.complete(with: clientError, at: 0)
         }
     }
     
@@ -174,7 +174,9 @@ class RemoteFeedImageDataLoaderTests: XCTestCase {
             return requests.map { $0.url }
         }
         
-        func completeWith(error: Error, at index: Int = 0) {
+        var cancelledURLs = [URL]()
+        
+        func complete(with error: Error, at index: Int = 0) {
             let (_, completion) = requests[index]
             completion(.failure(error))
         }
