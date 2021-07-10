@@ -6,10 +6,28 @@
 //
 
 import XCTest
+import EssentialFeed
 
-class LocalFeedImageDataLoader {
-    init(store: Any) {
-        
+protocol FeedImageDataStore {
+    
+    func retrieve(dataForURL url: URL)
+    
+}
+
+class LocalFeedImageDataLoader: FeedImageDataLoader {
+    struct Task: FeedImageDataLoaderTask {
+        func cancel() {}
+    }
+    
+    private let store: FeedImageDataStore
+    
+    init(store: FeedImageDataStore) {
+        self.store = store
+    }
+    
+    func loadImageData(from url: URL, completion: @escaping (FeedImageDataLoader.Result) -> Void) -> FeedImageDataLoaderTask {
+        store.retrieve(dataForURL: url)
+        return Task()
     }
 }
 
@@ -18,13 +36,23 @@ class LocalFeedImageDataLoaderTests: XCTestCase {
     func test_loadImageData_doesNotMessageStoreUponCreateion() {
         let (_, store) = makeSUT()
         
-        XCTAssertTrue(store.requestedURLs.isEmpty)
+        XCTAssertTrue(store.receivedMessages.isEmpty)
+    }
+    
+    
+    func test_loadImageData_requestsDataFromStore() {
+        let (sut, store) = makeSUT()
+        let url = anyURL()
+        
+        _ = sut.loadImageData(from: url) { _ in }
+        
+        XCTAssertEqual(store.receivedMessages, [.retrieve(dataFor: url)])
     }
     
     // MARK: Helpers
     
-    private func makeSUT(file: StaticString = #filePath, line: UInt = #line) -> (sut: LocalFeedImageDataLoader, store: FeedImageDataStoreSpy) {
-        let store = FeedImageDataStoreSpy()
+    private func makeSUT(file: StaticString = #filePath, line: UInt = #line) -> (sut: LocalFeedImageDataLoader, store: StoreSpy) {
+        let store = StoreSpy()
         let sut = LocalFeedImageDataLoader(store: store)
         
         trackMemoryLeaks(store, file: file, line: line)
@@ -33,8 +61,15 @@ class LocalFeedImageDataLoaderTests: XCTestCase {
         return (sut, store)
     }
     
-    class FeedImageDataStoreSpy {
-        let requestedURLs = [Any]()
+    class StoreSpy: FeedImageDataStore {
+        enum Message: Equatable {
+            case retrieve(dataFor: URL)
+        }
         
+        var receivedMessages = [Message]()
+        
+        func retrieve(dataForURL url: URL) {
+            receivedMessages.append(.retrieve(dataFor: url))
+        }
     }
 }
