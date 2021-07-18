@@ -10,12 +10,21 @@ import EssentialFeed
 
 class FeedLoaderWithFallbackComposite: FeedLoader {
     let primary: FeedLoader
+    let fallback: FeedLoader
     init(primary: FeedLoader, fallback: FeedLoader) {
         self.primary = primary
+        self.fallback = fallback
     }
     
     func load(completion: @escaping (FeedLoader.Result) -> Void) {
-        primary.load(completion: completion)
+        primary.load { [weak self] result in
+            switch result {
+            case .success:
+                completion(result)
+            case .failure:
+                self?.fallback.load(completion: completion)
+            }
+        }
     }
 }
 
@@ -39,6 +48,23 @@ class RemoteWithLocalFallbackFeedLoaderTests: XCTestCase {
         wait(for: [exp], timeout: 1.0)
     }
     
+    func test_load_deliversFallbackFeedOnPrimaryFailure() {
+        let fallbackFeed = uniqueFeed()
+        let sut = makeSUT(primaryResult: .failure(anyNSError()), fallbackResult: .success(fallbackFeed))
+
+        let exp = expectation(description: "Wait for load completion")
+        sut.load { result in
+            switch result {
+            case let .success(receivedFeed):
+                XCTAssertEqual(receivedFeed, fallbackFeed)
+            case .failure:
+                XCTFail("Expected successfull load feed result, got \(result) instead")
+            }
+            exp.fulfill()
+        }
+        wait(for: [exp], timeout: 1.0)
+    }
+    
     // MARK: Helpers
     
     private func makeSUT(primaryResult: FeedLoader.Result, fallbackResult: FeedLoader.Result, file: StaticString = #file, line: UInt = #line) -> FeedLoader {
@@ -51,10 +77,14 @@ class RemoteWithLocalFallbackFeedLoaderTests: XCTestCase {
         return sut
     }
     
-    func trackForMemoryLeaks(_ instance: AnyObject?, file: StaticString = #file, line: UInt = #line) {
+    private func trackForMemoryLeaks(_ instance: AnyObject?, file: StaticString = #file, line: UInt = #line) {
         addTeardownBlock { [weak instance] in
             XCTAssertNil(instance, "Instance should've been dealocated. Potential memory leak", file: file, line: line)
         }
+    }
+    
+    private func anyNSError() -> NSError {
+        return NSError(domain: "any", code: 0)
     }
     
     private func uniqueFeed() -> [FeedImage] {
