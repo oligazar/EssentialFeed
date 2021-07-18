@@ -16,20 +16,20 @@ class RemoteWithLocalFallbackFeedLoaderTests: XCTestCase {
         let fallbackFeed = uniqueFeed()
         let sut = makeSUT(primaryResult: .success(primaryFeed), fallbackResult: .success(fallbackFeed))
 
-        expect(sut: sut, toCompleteWith: .success(primaryFeed))
+        expect(sut, toCompleteWith: .success(primaryFeed))
     }
     
     func test_load_deliversFallbackFeedOnPrimaryFailure() {
         let fallbackFeed = uniqueFeed()
         let sut = makeSUT(primaryResult: .failure(anyNSError()), fallbackResult: .success(fallbackFeed))
 
-        expect(sut: sut, toCompleteWith: .success(fallbackFeed))
+        expect(sut, toCompleteWith: .success(fallbackFeed))
     }
     
     func test_load_deliversErrorOnBothPrimaryAndFallbackLoaderFailure() {
         let sut = makeSUT(primaryResult: .failure(anyNSError()), fallbackResult: .failure(anyNSError()))
 
-        expect(sut: sut, toCompleteWith: .failure(anyNSError()))
+        expect(sut, toCompleteWith: .failure(anyNSError()))
     }
     
     // MARK: Helpers
@@ -44,7 +44,7 @@ class RemoteWithLocalFallbackFeedLoaderTests: XCTestCase {
         return sut
     }
     
-    private func expect(sut: FeedLoader, toCompleteWith expectedResult: FeedLoader.Result, file: StaticString = #file, line: UInt = #line) {
+    private func expect(_ sut: FeedLoader, toCompleteWith expectedResult: FeedLoader.Result, file: StaticString = #file, line: UInt = #line) {
         let exp = expectation(description: "Wait for load completion")
         
         sut.load { receivedResult in
