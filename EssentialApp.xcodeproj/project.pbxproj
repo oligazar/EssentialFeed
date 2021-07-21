@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		8482A4CD26A80EC1001FC448 /* FeedImageDataLoaderWithFallbackComposite.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8482A4CC26A80EC1001FC448 /* FeedImageDataLoaderWithFallbackComposite.swift */; };
 		84A1EEAF26A45CAD00AF445A /* FeedLoaderWithFallbackComposite.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84A1EEAE26A45CAD00AF445A /* FeedLoaderWithFallbackComposite.swift */; };
 		84A1EEB126A45DB800AF445A /* RemoteWithLocalFallbackFeedImageDataLoaderTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84A1EEB026A45DB800AF445A /* RemoteWithLocalFallbackFeedImageDataLoaderTests.swift */; };
 		84A1EEB326A4686700AF445A /* EssentialAppUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84A1EEB226A4686700AF445A /* EssentialAppUITests.swift */; };
@@ -56,6 +57,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		8482A4CC26A80EC1001FC448 /* FeedImageDataLoaderWithFallbackComposite.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedImageDataLoaderWithFallbackComposite.swift; sourceTree = "<group>"; };
 		84A1EEAE26A45CAD00AF445A /* FeedLoaderWithFallbackComposite.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedLoaderWithFallbackComposite.swift; sourceTree = "<group>"; };
 		84A1EEB026A45DB800AF445A /* RemoteWithLocalFallbackFeedImageDataLoaderTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RemoteWithLocalFallbackFeedImageDataLoaderTests.swift; sourceTree = "<group>"; };
 		84A1EEB226A4686700AF445A /* EssentialAppUITests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EssentialAppUITests.swift; sourceTree = "<group>"; };
@@ -135,6 +137,7 @@
 				84C55604269EB8CD005BEEE1 /* LaunchScreen.storyboard */,
 				84C55607269EB8CD005BEEE1 /* Info.plist */,
 				84A1EEAE26A45CAD00AF445A /* FeedLoaderWithFallbackComposite.swift */,
+				8482A4CC26A80EC1001FC448 /* FeedImageDataLoaderWithFallbackComposite.swift */,
 			);
 			path = EssentialApp;
 			sourceTree = "<group>";
@@ -303,6 +306,7 @@
 				84C555FA269EB8C9005BEEE1 /* AppDelegate.swift in Sources */,
 				84A1EEAF26A45CAD00AF445A /* FeedLoaderWithFallbackComposite.swift in Sources */,
 				84C555FC269EB8C9005BEEE1 /* SceneDelegate.swift in Sources */,
+				8482A4CD26A80EC1001FC448 /* FeedImageDataLoaderWithFallbackComposite.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

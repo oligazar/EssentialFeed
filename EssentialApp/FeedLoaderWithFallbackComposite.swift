@@ -10,6 +10,7 @@ import EssentialFeed
 public class FeedLoaderWithFallbackComposite: FeedLoader {
     let primary: FeedLoader
     let fallback: FeedLoader
+    
     public init(primary: FeedLoader, fallback: FeedLoader) {
         self.primary = primary
         self.fallback = fallback
