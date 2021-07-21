@@ -64,7 +64,7 @@ class RemoteWithLocalFallbackFeedImageDataLoaderTests: XCTestCase {
     
     func test_loadImageData_deliversPrimaryDataOnPrimaryLoaderSuccess() {
         let (sut, primaryLoader, _) = makeSUT()
-        let primaryData = anyImageData()
+        let primaryData = anyData()
         
         expect(sut, toCompleteWith: .success(primaryData), when: {
             primaryLoader.complete(with: primaryData)
@@ -73,7 +73,7 @@ class RemoteWithLocalFallbackFeedImageDataLoaderTests: XCTestCase {
     
     func test_loadImageData_deliversFallbackDataOnPrimaryLoaderFailure() {
         let (sut, primaryLoader, fallbackLoader) = makeSUT()
-        let fallbackData = anyImageData()
+        let fallbackData = anyData()
         
         expect(sut, toCompleteWith: .success(fallbackData), when: {
             primaryLoader.complete(with: anyNSError())
@@ -121,18 +121,6 @@ class RemoteWithLocalFallbackFeedImageDataLoaderTests: XCTestCase {
         wait(for: [exp], timeout: 1.0)
     }
     
-    private func anyImageData() -> Data {
-        return UIImage.make(withColor: .red).pngData()!
-    }
-    
-    func anyURL() -> URL {
-        return URL(string: "http://any-url.com")!
-    }
-    
-    private func anyNSError() -> NSError {
-        return NSError(domain: "any", code: 0)
-    }
-    
     class LoaderSpy: FeedImageDataLoader {
         var messages = [(url: URL, completion: (FeedImageDataLoader.Result) -> Void)]()
         var loadedURLs: [URL] {
@@ -160,18 +148,5 @@ class RemoteWithLocalFallbackFeedImageDataLoaderTests: XCTestCase {
         func complete(with data: Data, at index: Int = 0) {
             messages[index].completion(.success(data))
         }
-    }
-}
-
-private extension UIImage {
-    static func make(withColor color: UIColor) -> UIImage {
-        let rect = CGRect(x: 0, y: 0, width: 1, height: 1)
-        UIGraphicsBeginImageContext(rect.size)
-        let context = UIGraphicsGetCurrentContext()!
-        context.setFillColor(color.cgColor)
-        context.fill(rect)
-        let img = UIGraphicsGetImageFromCurrentImageContext()
-        UIGraphicsEndImageContext()
-        return img!
     }
 }
