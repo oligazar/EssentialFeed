@@ -29,7 +29,7 @@ class FeedImageDataLoaderWithFallbackComposite: FeedImageDataLoader {
         task.wrapped = primary.loadImageData(from: url) { [weak self] result in
             switch(result) {
             case .success:
-                break
+                completion(result)
             case .failure:
                 task.wrapped = self?.fallback.loadImageData(from: url) { _ in }
             }
@@ -91,6 +91,15 @@ class RemoteWithLocalFallbackFeedImageDataLoaderTests: XCTestCase {
         XCTAssertEqual(fallbackLoader.cancelledURLs, [url], "Expected to cancel URL loading from the fallback loader")
     }
     
+    func test_loadImageData_deliversPrimaryDataOnPrimaryLoaderSuccess() {
+        let (sut, primaryLoader, _) = makeSUT()
+        let primaryData = anyImageData()
+        
+        expect(sut, toCompleteWith: .success(primaryData), when: {
+            primaryLoader.complete(with: primaryData)
+        })
+    }
+    
     // MARK: Helpers
     
     private func makeSUT(file: StaticString = #file, line: UInt = #line) -> (sut: FeedImageDataLoader, primary: LoaderSpy, fallback: LoaderSpy) {
@@ -101,6 +110,25 @@ class RemoteWithLocalFallbackFeedImageDataLoaderTests: XCTestCase {
         trackForMemoryLeaks(fallbackLoader, file: file, line: line)
         trackForMemoryLeaks(sut, file: file, line: line)
         return (sut, primaryLoader, fallbackLoader)
+    }
+    
+    private func expect(_ sut: FeedImageDataLoader, toCompleteWith expectedResult: FeedImageDataLoader.Result, when action: () -> Void, file: StaticString = #file, line: UInt = #line) {
+        let exp = expectation(description: "Wait for load completion")
+        
+        _ = sut.loadImageData(from: anyURL()) { receivedResult in
+            switch (expectedResult, receivedResult) {
+            case let (.success(expectedData), .success(receivedData)):
+                XCTAssertEqual(expectedData, receivedData, file: file, line: line)
+            case (.failure, .failure):
+                break
+            default:
+                XCTFail("Expected \(expectedResult), got \(receivedResult) instead", file: file, line: line)
+            }
+            exp.fulfill()
+        }
+        action()
+        
+        wait(for: [exp], timeout: 1.0)
     }
     
     private func anyImageData() -> Data {
@@ -143,6 +171,10 @@ class RemoteWithLocalFallbackFeedImageDataLoaderTests: XCTestCase {
         
         func complete(with error: Error, at index: Int = 0) {
             messages[index].completion(.failure(error))
+        }
+        
+        func complete(with data: Data, at index: Int = 0) {
+            messages[index].completion(.success(data))
         }
     }
 }
