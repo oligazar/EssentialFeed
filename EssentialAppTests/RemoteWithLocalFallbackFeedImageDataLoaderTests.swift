@@ -30,19 +30,15 @@ class FeedImageDataLoaderWithFallbackComposite: FeedImageDataLoader {
 class RemoteWithLocalFallbackFeedImageDataLoaderTests: XCTestCase {
     
     func test_init_doesNotLoadImageData() {
-        let primaryLoader = LoaderSpy()
-        let fallbackLoader = LoaderSpy()
-        _ = FeedImageDataLoaderWithFallbackComposite(primary: primaryLoader, fallback: fallbackLoader)
+        let (_, primaryLoader, fallbackLoader) = makeSUT()
         
         XCTAssertTrue(primaryLoader.loadedURLs.isEmpty, "Expected no loaded URLs in the primary loader")
         XCTAssertTrue(fallbackLoader.loadedURLs.isEmpty, "Expected no loaded URLs in the fallback loader")
     }
     
     func test_loadImageData_loadsFromPrimaryLoaderFirst() {
-        let primaryLoader = LoaderSpy()
-        let fallbackLoader = LoaderSpy()
         let url = anyURL()
-        let sut = FeedImageDataLoaderWithFallbackComposite(primary: primaryLoader, fallback: fallbackLoader)
+        let (sut, primaryLoader, fallbackLoader) = makeSUT()
         
         _ = sut.loadImageData(from: url) { _ in }
         
@@ -51,6 +47,16 @@ class RemoteWithLocalFallbackFeedImageDataLoaderTests: XCTestCase {
     }
     
     // MARK: Helpers
+    
+    private func makeSUT() -> (sut: FeedImageDataLoader, primary: LoaderSpy, fallback: LoaderSpy) {
+        let primaryLoader = LoaderSpy()
+        let fallbackLoader = LoaderSpy()
+        let sut = FeedImageDataLoaderWithFallbackComposite(primary: primaryLoader, fallback: fallbackLoader)
+        trackForMemoryLeaks(primaryLoader)
+        trackForMemoryLeaks(fallbackLoader)
+        trackForMemoryLeaks(sut)
+        return (sut, primaryLoader, fallbackLoader)
+    }
     
     private func anyImageData() -> Data {
         return UIImage.make(withColor: .red).pngData()!
