@@ -61,12 +61,6 @@ class RemoteWithLocalFallbackFeedLoaderTests: XCTestCase {
         wait(for: [exp], timeout: 1.0)
     }
     
-    private func trackForMemoryLeaks(_ instance: AnyObject?, file: StaticString = #file, line: UInt = #line) {
-        addTeardownBlock { [weak instance] in
-            XCTAssertNil(instance, "Instance should've been dealocated. Potential memory leak", file: file, line: line)
-        }
-    }
-    
     private func anyNSError() -> NSError {
         return NSError(domain: "any", code: 0)
     }

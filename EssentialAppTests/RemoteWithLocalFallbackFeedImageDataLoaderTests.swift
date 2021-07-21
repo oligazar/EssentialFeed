@@ -125,12 +125,6 @@ class RemoteWithLocalFallbackFeedImageDataLoaderTests: XCTestCase {
         return UIImage.make(withColor: .red).pngData()!
     }
     
-    private func trackForMemoryLeaks(_ instance: AnyObject?, file: StaticString = #file, line: UInt = #line) {
-        addTeardownBlock { [weak instance] in
-            XCTAssertNil(instance, "Instance should've been dealocated. Potential memory leak", file: file, line: line)
-        }
-    }
-    
     func anyURL() -> URL {
         return URL(string: "http://any-url.com")!
     }
