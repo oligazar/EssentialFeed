@@ -47,8 +47,8 @@ class CacheFeedImageDataUseCaseTests: XCTestCase {
         let store = FeedImageDataStoreSpy()
         var sut: LocalFeedImageDataLoader? = LocalFeedImageDataLoader(store: store)
         
-        trackMemoryLeaks(store)
-        trackMemoryLeaks(sut)
+        trackForMemoryLeaks(store)
+        trackForMemoryLeaks(sut)
         
         var received = [LocalFeedImageDataLoader.SaveResult]()
         sut?.save(anyData(), for: anyURL()) { result in
@@ -69,8 +69,8 @@ class CacheFeedImageDataUseCaseTests: XCTestCase {
         let store = FeedImageDataStoreSpy()
         let sut = LocalFeedImageDataLoader(store: store)
         
-        trackMemoryLeaks(store, file: file, line: line)
-        trackMemoryLeaks(sut, file: file, line: line)
+        trackForMemoryLeaks(store, file: file, line: line)
+        trackForMemoryLeaks(sut, file: file, line: line)
         
         return (sut, store)
     }

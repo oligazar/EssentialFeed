@@ -66,8 +66,8 @@ class FeedImagePresenterTests: XCTestCase {
     private func makeSut(transformer: @escaping (Data) -> String? = { $0.base64EncodedString() }, file: StaticString = #filePath, line: UInt = #line) -> (sut: FeedImagePresenter<ViewSpy, String>, view: ViewSpy) {
         let view = ViewSpy()
         let sut = FeedImagePresenter(view: view, imageTransformer: transformer)
-        trackMemoryLeaks(view)
-        trackMemoryLeaks(sut)
+        trackForMemoryLeaks(view)
+        trackForMemoryLeaks(sut)
         return (sut, view)
     }
     
