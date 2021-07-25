@@ -8,49 +8,45 @@
 import Foundation
 
 public protocol FeedImageView {
-    associatedtype Image: Equatable
+    associatedtype Image
     
     func display(_ model: FeedImageViewModel<Image>)
 }
 
-public class FeedImagePresenter<View: FeedImageView, Image> where View.Image == Image {
-    private let view: View
-    private let imageTransformer: (Data) -> Image?
+public final class FeedImagePresenter<View: FeedImageView, Image> where View.Image == Image {
+    let view: View
+    let imageTransformer: (Data) -> Image?
     
     public init(view: View, imageTransformer: @escaping (Data) -> Image?) {
         self.view = view
         self.imageTransformer = imageTransformer
     }
     
-    public func didStartLoadingImage(for model: FeedImage) {
+    public func didStartLoadingImageData(for model: FeedImage) {
         view.display(FeedImageViewModel(
-            location: model.location,
-            description: model.description,
-            image: nil, isImageLoading: true,
-            shouldRetry: false
-        ))
+                        description: model.description,
+                        location: model.location,
+                        image: nil,
+                        isLoading: true,
+                        shouldRetry: false))
     }
     
-    public func didFinishLoadingImage(_ data: Data, for model: FeedImage) {        
-        guard let image = imageTransformer(data) else {
-            return didFailedLoadingImage(for: model)
-        }
+    public func didFinishLoadingImageData(with data: Data, for model: FeedImage) {
+        let image = imageTransformer(data)
         view.display(FeedImageViewModel(
-            location: model.location,
-            description: model.description,
-            image: image,
-            isImageLoading: false,
-            shouldRetry: false
-        ))
+                        description: model.description,
+                        location: model.location,
+                        image: image,
+                        isLoading: false,
+                        shouldRetry: image == nil))
     }
     
-    public func didFailedLoadingImage(for model: FeedImage) {
+    public func didFinishLoadingImageData(with error: Error, for model: FeedImage) {
         view.display(FeedImageViewModel(
-            location: model.location,
-            description: model.description,
-            image: nil,
-            isImageLoading: false,
-            shouldRetry: true
-        ))
+                        description: model.description,
+                        location: model.location,
+                        image: nil,
+                        isLoading: false,
+                        shouldRetry: true))
     }
 }
