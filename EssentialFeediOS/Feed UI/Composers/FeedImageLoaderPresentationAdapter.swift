@@ -21,14 +21,15 @@ final class FeedImageLoaderPresentationAdapter<View: FeedImageView, Image>: Feed
     }
     
     func didRequestImage() {
-        presenter?.didStartLoadingImage(for: model)
+        presenter?.didStartLoadingImageData(for: model)
         task = imageLoader.loadImageData(from: model.url) { [weak self] result in
             guard let self = self else { return }
             
-            if let data = (try? result.get()) {
-                self.presenter?.didFinishLoadingImage(data, for: self.model)
-            } else {
-                self.presenter?.didFailedLoadingImage(for: self.model)
+            switch (result) {
+            case let .success(data):
+                self.presenter?.didFinishLoadingImageData(with: data, for: self.model)
+            case let .failure(error):
+                self.presenter?.didFinishLoadingImageData(with: error, for: self.model)
             }
         }
     }
