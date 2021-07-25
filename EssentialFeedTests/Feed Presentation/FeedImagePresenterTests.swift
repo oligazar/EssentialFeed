@@ -5,112 +5,106 @@
 //  Created by Alexander on 30/6/21.
 //
 
-import Foundation
 import XCTest
-@testable import EssentialFeed
+import EssentialFeed
 
 class FeedImagePresenterTests: XCTestCase {
     
     func test_init_doesNotSendMessagesToView() {
         let (_, view) = makeSut()
         
-        XCTAssertEqual(view.message, nil)
+        XCTAssertTrue(view.messages.isEmpty, "Expected no view messages")
     }
     
-    func test_didStartLoadingImage_displaysLoadingIndicatorAndNoImage() {
+    func test_didStartLoadingImageData_displaysLoadingImage() {
         let (sut, view) = makeSut()
-        let image: String? = nil
-        let (model, viewModel) = makeModel(image: image, isImageLoading: true, shouldRetry: false)
-
-        sut.didStartLoadingImage(for: model)
-
-        XCTAssertEqual(view.message, viewModel)
+        let image = uniqueImage()
+        
+        sut.didStartLoadingImageData(for: image)
+        
+        let message = view.messages.first
+        XCTAssertEqual(view.messages.count, 1)
+        XCTAssertEqual(message?.description, image.description)
+        XCTAssertEqual(message?.location, image.location)
+        XCTAssertEqual(message?.isLoading, true)
+        XCTAssertEqual(message?.shouldRetry, false)
+        XCTAssertNil(message?.image)
+        
     }
     
-    func test_didFinishLoadingImage_displaysTransformedImageNoLoadingAndNoRetry() {
+    func test_didStartLoadingImageData_displaysRetryOnFailedImageTransformation() {
+        let (sut, view) = makeSut(imageTransformer: fail)
+        let image = uniqueImage()
+        
+        sut.didFinishLoadingImageData(with: Data(), for: image)
+        
+        let message = view.messages.first
+        XCTAssertEqual(view.messages.count, 1)
+        XCTAssertEqual(message?.description, image.description)
+        XCTAssertEqual(message?.location, image.location)
+        XCTAssertEqual(message?.isLoading, false)
+        XCTAssertEqual(message?.shouldRetry, true)
+        XCTAssertNil(message?.image)
+        
+    }
+    
+    func test_didStartLoadingImageData_displaysImageOnSuccessfullTransformation() {
+        let image = uniqueImage()
+        let transformedData = AnyImage()
+        let (sut, view) = makeSut(imageTransformer: { _ in transformedData })
+        
+        sut.didFinishLoadingImageData(with: Data(), for: image)
+        
+        let message = view.messages.first
+        XCTAssertEqual(view.messages.count, 1)
+        XCTAssertEqual(message?.description, image.description)
+        XCTAssertEqual(message?.location, image.location)
+        XCTAssertEqual(message?.isLoading, false)
+        XCTAssertEqual(message?.shouldRetry, false)
+        XCTAssertEqual(message?.image, transformedData)
+        
+    }
+    
+    func test_didStartLoadingImageDataWithError_displaysRetry() {
+        let image = uniqueImage()
         let (sut, view) = makeSut()
         
-        let data = anyImageData()
-        let (model, viewModel) = makeModel(image: data.base64EncodedString(), isImageLoading: false, shouldRetry: false)
-
-        sut.didFinishLoadingImage(data, for: model)
-
-        XCTAssertEqual(view.message, viewModel)
-    }
-    
-    func test_didFinishLoadingImage_displaysNoImageNoLoadingAndRetryOnInvalidData() {
-        let (sut, view) = makeSut(transformer: { _ in nil })
+        sut.didFinishLoadingImageData(with: anyNSError(), for: image)
         
-        let data = Data("invalid image data".utf8)
-        let image: String? = nil
-        let (model, viewModel) = makeModel(image: image, isImageLoading: false, shouldRetry: true)
-
-        sut.didFinishLoadingImage(data, for: model)
-
-        XCTAssertEqual(view.message, viewModel)
-    }
-    
-    func test_didFailedLoadingImage_displaysNoImageNoLoadingAndRetry() {
-        let (sut, view) = makeSut()
+        let message = view.messages.first
+        XCTAssertEqual(view.messages.count, 1)
+        XCTAssertEqual(message?.description, image.description)
+        XCTAssertEqual(message?.location, image.location)
+        XCTAssertEqual(message?.isLoading, false)
+        XCTAssertEqual(message?.shouldRetry, true)
+        XCTAssertNil(message?.image)
         
-        let image: String? = nil
-        let (model, viewModel) = makeModel(image: image, isImageLoading: false, shouldRetry: true)
-
-        sut.didFailedLoadingImage(for: model)
-
-        XCTAssertEqual(view.message, viewModel)
     }
     
     // MARK: helpers
     
-    private func makeSut(transformer: @escaping (Data) -> String? = { $0.base64EncodedString() }, file: StaticString = #filePath, line: UInt = #line) -> (sut: FeedImagePresenter<ViewSpy, String>, view: ViewSpy) {
+    private func makeSut(
+        imageTransformer: @escaping (Data) -> AnyImage? = { _ in nil },
+        file: StaticString = #filePath, line: UInt = #line) -> (sut: FeedImagePresenter<ViewSpy, AnyImage>, view: ViewSpy) {
         let view = ViewSpy()
-        let sut = FeedImagePresenter(view: view, imageTransformer: transformer)
+        let sut = FeedImagePresenter<ViewSpy, AnyImage>(view: view, imageTransformer: imageTransformer)
         trackMemoryLeaks(view)
         trackMemoryLeaks(sut)
         return (sut, view)
     }
     
-    private func makeModel<Image: Equatable>(image: Image?, isImageLoading: Bool, shouldRetry: Bool) -> (model: FeedImage, viewModel: FeedImageViewModel<Image>)  {
-        let model = FeedImage(
-            id: UUID(),
-            description: "start loading",
-            location: "any location",
-            url: URL(string: "http://image.url")!
-        )
-        let viewModel = FeedImageViewModel<Image>(
-            location: model.location,
-            description: model.description,
-            image: image,
-            isImageLoading: isImageLoading,
-            shouldRetry: shouldRetry)
-        return (model, viewModel)
+    private var fail: (Data) -> AnyImage? {
+        return { _ in nil }
     }
+    
+    private struct AnyImage: Equatable {}
     
     private class ViewSpy: FeedImageView {
-        typealias Image = String
-        var message: FeedImageViewModel<String>? = nil
         
-        func display(_ model: FeedImageViewModel<String>) {
-            message = model
+        private(set) var messages = [FeedImageViewModel<AnyImage>]()
+        
+        func display(_ model: FeedImageViewModel<AnyImage>) {
+            messages.append(model)
         }
-        
-    }
-    
-    private func anyImageData() -> Data {
-        return UIImage.make(withColor: .red).pngData()!
-    }
-}
-
-private extension UIImage {
-    static func make(withColor color: UIColor) -> UIImage {
-        let rect = CGRect(x: 0, y: 0, width: 1, height: 1)
-        UIGraphicsBeginImageContext(rect.size)
-        let context = UIGraphicsGetCurrentContext()!
-        context.setFillColor(color.cgColor)
-        context.fill(rect)
-        let img = UIGraphicsGetImageFromCurrentImageContext()
-        UIGraphicsEndImageContext()
-        return img!
     }
 }
