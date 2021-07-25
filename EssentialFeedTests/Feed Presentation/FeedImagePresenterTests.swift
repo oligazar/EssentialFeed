@@ -88,8 +88,8 @@ class FeedImagePresenterTests: XCTestCase {
         file: StaticString = #filePath, line: UInt = #line) -> (sut: FeedImagePresenter<ViewSpy, AnyImage>, view: ViewSpy) {
         let view = ViewSpy()
         let sut = FeedImagePresenter<ViewSpy, AnyImage>(view: view, imageTransformer: imageTransformer)
-        trackMemoryLeaks(view)
-        trackMemoryLeaks(sut)
+        trackForMemoryLeaks(view)
+        trackForMemoryLeaks(sut)
         return (sut, view)
     }
     
