@@ -72,7 +72,6 @@
 		84C55600269EB8C9005BEEE1 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		84C55602269EB8CD005BEEE1 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		84C55605269EB8CD005BEEE1 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
-		84C55607269EB8CD005BEEE1 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		84C5560C269EB8CD005BEEE1 /* EssentialAppTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = EssentialAppTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		84C55610269EB8CD005BEEE1 /* RemoteWithLocalFallbackFeedLoaderTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RemoteWithLocalFallbackFeedLoaderTests.swift; sourceTree = "<group>"; };
 		84C55612269EB8CD005BEEE1 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -148,11 +147,10 @@
 				84C555FF269EB8C9005BEEE1 /* Main.storyboard */,
 				84C55602269EB8CD005BEEE1 /* Assets.xcassets */,
 				84C55604269EB8CD005BEEE1 /* LaunchScreen.storyboard */,
-				84C55607269EB8CD005BEEE1 /* Info.plist */,
 				84A1EEAE26A45CAD00AF445A /* FeedLoaderWithFallbackComposite.swift */,
 				8482A4CC26A80EC1001FC448 /* FeedImageDataLoaderWithFallbackComposite.swift */,
 			);
-			path = EssentialApp;
+			name = EssentialApp;
 			sourceTree = "<group>";
 		};
 		84C5560F269EB8CD005BEEE1 /* EssentialAppTests */ = {
@@ -501,7 +499,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = PF33M493XW;
-				INFOPLIST_FILE = EssentialApp/Info.plist;
+				INFOPLIST_FILE = Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -520,7 +518,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = PF33M493XW;
-				INFOPLIST_FILE = EssentialApp/Info.plist;
+				INFOPLIST_FILE = Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
