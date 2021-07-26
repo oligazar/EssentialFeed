@@ -358,13 +358,6 @@
 			path = Views;
 			sourceTree = "<group>";
 		};
-		847A1CF4265BBC490089F45E /* Feed Image Loader */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			path = "Feed Image Loader";
-			sourceTree = "<group>";
-		};
 		847A1D08265BE7530089F45E /* Composers */ = {
 			isa = PBXGroup;
 			children = (
@@ -465,7 +458,6 @@
 			children = (
 				84B4EEBE2648DE69002B726C /* Info.plist */,
 				847A1CE5265BBB770089F45E /* Feed UI */,
-				847A1CF4265BBC490089F45E /* Feed Image Loader */,
 			);
 			path = EssentialFeediOS;
 			sourceTree = "<group>";
